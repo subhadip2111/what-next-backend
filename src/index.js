@@ -17,3 +17,7 @@ mongoose.connect(`${process.env.BACKEND_MONGODBCONNECTION_URL}`, { useNewUrlPars
 app.listen(process.env.PORT,()=>{
     console.log(`express running on port ${process.env.PORT}`);
 })
+
+app.get('/',()=>{
+  return "hello world"
+})
