@@ -2,11 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import router from "./Routes/routes.js";
 import multer from "multer";
+import cors from "cors"
+
 import dotenv from 'dotenv'; // Assuming you're using environment variables
 dotenv.config(); // Load environment variables
 
 const app = express();
-
+app.use(cors())
 // Improved error handling (remove if you don't need both)
 // app.use(bodyParser.urlencoded({ extended: true }));
 
