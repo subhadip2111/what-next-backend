@@ -26,6 +26,6 @@ router.get('/api/blog/:blogId',getBlogById)
 
 //exam
 router.get('/api/exam',getAllExams)
-router.get('api/exams/:examId',getExamById)
+router.get('/api/exams/:examId',getExamById)
 
 export default router;
