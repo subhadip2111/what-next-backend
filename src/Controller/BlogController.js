@@ -45,3 +45,13 @@ export const getBlogById=async(req,res)=>{
         
     }
 }
+
+export const getAllBlogs=async (req,res)=>{
+
+    try {
+        const allBlogs=await BlogModel.find({})
+        return res.status(200).json({"data":allBlogs})
+    } catch (error) {
+        
+    }
+}

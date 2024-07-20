@@ -3,7 +3,7 @@ import multer from 'multer';
 import cloudinary from "cloudinary";
 import dotenv from 'dotenv'; // Assuming you're using environment variables
 dotenv.config(); // Load environment variables
-import {createBlog, getBlogById} from "../Controller/BlogController.js"
+import {createBlog, getAllBlogs, getBlogById} from "../Controller/BlogController.js"
 import { getAllExams, getExamById } from '../Controller/ExamController.js';
 // Configure Multer for single file uploads with field name 'image'
 const storage = multer.diskStorage({
@@ -22,7 +22,7 @@ const router = express.Router();
 
 router.post('/api/blog', upload.single('image'), createBlog);
 router.get('/api/blog/:blogId',getBlogById)
-
+router.get('/api/blog',getAllBlogs)
 
 //exam
 router.get('/api/exam',getAllExams)
