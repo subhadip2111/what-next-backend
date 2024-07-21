@@ -50,7 +50,7 @@ export async function getAllExams(req, res) {
     const exams = await ExamModel.find(query).limit(limit).skip(offset);
 
     res.json({ success: true, data: exams }); // Use res.json directly for Express response
-  } catch (error) {
+  } catch (error) { 
     console.error("Error fetching exams:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" }); // Set status code and error message
   }

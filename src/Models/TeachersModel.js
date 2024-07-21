@@ -2,8 +2,9 @@
 import mongoose from 'mongoose';
 
 const ExamPreparationSchema = new mongoose.Schema({
-  examName: {
-    type: String,
+  exam: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Exams',
     required: true,
   },
   fees: {
@@ -33,12 +34,12 @@ const TeacherSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  examPreparation: {
-    type: [ExamPreparationSchema],
-    required: true,
-  },
+  examPreparation: [ExamPreparationSchema],
 }, {
   timestamps: true,
 });
 
-export default mongoose.models.Teacher || mongoose.model('Teacher', TeacherSchema);
+const TeacherModel= mongoose.models.Teacher || mongoose.model('Teacher', TeacherSchema);
+export default TeacherModel
+
+ 

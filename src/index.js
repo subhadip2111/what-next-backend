@@ -38,6 +38,7 @@ mongoose.connect(process.env.BACKEND_MONGODBCONNECTION_URL, {
 });
 
 
+app.use(express.json());
 
  app.use("/", router);
 
