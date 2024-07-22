@@ -1,16 +1,37 @@
-// models/teacher.js
 import mongoose from 'mongoose';
 
 const ExamPreparationSchema = new mongoose.Schema({
-  exam: {
+  examId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Exams',
     required: true,
   },
-  fees: {
+  examName: {
     type: String,
     required: true,
   },
+  fees: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    default: '',
+  },
+  className: {
+    type: String,
+    default: '',
+  },
+  schedule: [{
+    date: {
+      type: Date,
+      required: true,
+    },
+    time: {
+      type: String,
+      required: true,
+    }
+  }],
 });
 
 const TeacherSchema = new mongoose.Schema({
@@ -18,13 +39,13 @@ const TeacherSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  contactInfo: {
+  email: {
     type: String,
-    required: true,
+    required: false,
   },
   mobile: {
     type: String,
-    required: true,
+    required: false,
   },
   address: {
     type: String,
@@ -32,14 +53,12 @@ const TeacherSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    required: true,
+    required: false,  
   },
   examPreparation: [ExamPreparationSchema],
 }, {
   timestamps: true,
 });
 
-const TeacherModel= mongoose.models.Teacher || mongoose.model('Teacher', TeacherSchema);
-export default TeacherModel
-
- 
+const TeacherModel = mongoose.models.Teacher || mongoose.model('Teacher', TeacherSchema);
+export default TeacherModel;

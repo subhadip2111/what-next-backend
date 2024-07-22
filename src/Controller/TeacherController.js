@@ -1,5 +1,6 @@
 import ExamModel from "../Models/ExamModels.js";
 import TeacherModel from "../Models/TeachersModel.js";
+import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 
 
 
@@ -39,7 +40,7 @@ export const addTeacher = async (req, res) => {
   //
   export const findTeacherByQuery = async (req, res) => {
     try {
-      const { location, examName, className, keyword, limit = 10, offset = 0 } = req.query;
+      const { location, examName, className, keyword, limit = 10, offset = 0, priceGt, priceLt } = req.query;
   
       // Convert limit and offset to numbers
       const limitNumber = parseInt(limit, 10);
@@ -47,8 +48,10 @@ export const addTeacher = async (req, res) => {
   
       // Build the filter criteria
       let query = {};
+  
+      // Filter by location
       if (location) {
-        query['address'] = { $regex: location, $options: 'i' }; // Case-insensitive regex for location
+        query['address'] = { $regex: location, $options: 'i' };
       }
   
       // Find exam IDs by examName
@@ -60,7 +63,7 @@ export const addTeacher = async (req, res) => {
   
       // Add examName filter if provided
       if (examIds.length > 0) {
-        query['examPreparation.exam'] = { $in: examIds };
+        query['examPreparation.examId'] = { $in: examIds };
       }
   
       // Add className filter if provided
@@ -70,22 +73,85 @@ export const addTeacher = async (req, res) => {
   
       // Add keyword search if provided
       if (keyword) {
-        query['examPreparation.exam'] = { $search: keyword };
+        query['$or'] = [
+          { name: { $regex: keyword, $options: 'i' } },
+          { address: { $regex: keyword, $options: 'i' } },
+          { 'examPreparation.description': { $regex: keyword, $options: 'i' } },
+          { 'examPreparation.examName': { $regex: keyword, $options: 'i' } },
+          { 'examPreparation.fees': { $regex: keyword, $options: 'i' } }
+        ];
       }
   
+      // Add price filter if provided
+      if (priceGt || priceLt) {
+        query['examPreparation.fees'] = {};
+        if (priceGt) {
+          query['examPreparation.fees']['$gte'] = parseFloat(priceGt);
+        }
+        if (priceLt) {
+          query['examPreparation.fees']['$lte'] = parseFloat(priceLt);
+        }
+      }
   
       // Find teachers with pagination and population
       const teachers = await TeacherModel.find(query)
-        .populate('examPreparation.exam', 'name') 
+        .populate({
+          path: 'examPreparation.examId',
+          select: 'name'
+        })
         .skip(offsetNumber)
         .limit(limitNumber)
         .exec();
   
-      // Debugging log
-      
-      res.json(teachers);
+      return res.status(200).json(teachers);
     } catch (error) {
       console.error('Error fetching teachers:', error);
-      res.status(500).json({ message: "An error occurred while fetching teachers." });
+      return res.status(500).json({ message: "An error occurred while fetching teachers." });
+    }
+  };
+
+  export const teacherProfileDetails=async (req,res)=>{
+
+    const teachersId=req.params.teacherId
+    try {
+      const teacher=await TeacherModel.findById(teachersId).populate('examPreparation')
+      if(!teacher){
+        return res.status(404).json({message:"Teacher not found"})  
+      }
+      return res.status(200).json(teacher)
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+      return res.status(500).json({ message: "An error occurred while fetching teachers." });
+    }
+  }
+
+  export const uploadProfileImage = async (req, res) => {
+    try {
+      const teacherId = req.params.teacherId;
+  
+      // Check if a file is uploaded
+      if (!req.file || !req.file.path) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+  
+      // Find the teacher by ID
+      const teacher = await TeacherModel.findById(teacherId);
+      if (!teacher) {
+        return res.status(404).json({ message: "Teacher not found" });
+      }
+  
+      const imageUrl = await uploadImageToCloudinary(req.file.path, "profilePic");
+  
+      teacher.profilePic = imageUrl;
+  
+      // Save the updated teacher document
+      const updatedTeacher = await teacher.save();
+  
+      // Respond with the updated teacher data
+      return res.status(200).json(updatedTeacher);
+  
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      return res.status(500).json({ message: "An error occurred while uploading the profile image." });
     }
   };
