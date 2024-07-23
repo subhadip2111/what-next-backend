@@ -128,12 +128,12 @@ export const addTeacher = async (req, res) => {
   export const uploadProfileImage = async (req, res) => {
     try {
       const teacherId = req.params.teacherId;
-  
+  // console.log(req.file.path );
       // Check if a file is uploaded
-      if (!req.file || !req.file.path) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
-  
+        if (!req.file || !req.file.path) {
+          return res.status(400).json({ message: "No file uploaded" });
+        }
+    
       // Find the teacher by ID
       const teacher = await TeacherModel.findById(teacherId);
       if (!teacher) {
@@ -141,7 +141,7 @@ export const addTeacher = async (req, res) => {
       }
   
       const imageUrl = await uploadImageToCloudinary(req.file.path, "profilePic");
-  
+  console.log(imageUrl);
       teacher.profilePic = imageUrl;
   
       // Save the updated teacher document
