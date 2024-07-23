@@ -78,7 +78,7 @@ export const addTeacher = async (req, res) => {
           { address: { $regex: keyword, $options: 'i' } },
           { 'examPreparation.description': { $regex: keyword, $options: 'i' } },
           { 'examPreparation.examName': { $regex: keyword, $options: 'i' } },
-          { 'examPreparation.fees': { $regex: keyword, $options: 'i' } }
+          { 'examPreparation.fees': { $regex: keyword , $options: 'i'} }
         ];
       }
   

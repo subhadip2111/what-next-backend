@@ -11,7 +11,7 @@ const ExamPreparationSchema = new mongoose.Schema({
     required: true,
   },
   fees: {
-    type: Number,
+    type: String,
     required: true,
   },
   description: {
