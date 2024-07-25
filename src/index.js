@@ -6,7 +6,8 @@ import cors from "cors"
 
 import dotenv from 'dotenv'; // Assuming you're using environment variables
 dotenv.config(); // Load environment variables
-
+import rateLimit from 'express-rate-limit';
+import requestIp  from "request-ip"
 const app = express();
 app.use(cors())
 // Improved error handling (remove if you don't need both)
@@ -36,12 +37,21 @@ mongoose.connect(process.env.BACKEND_MONGODBCONNECTION_URL, {
 .catch(err => {
   console.error('MongoDB connection error:', err);
 });
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 80, // Limit each IP to 5 requests per `window` (here, per minute)
+  handler: function (req, res, /*next*/) {
+    return res.status(429).json({
+      error: 'You sent too many requests. Please wait a while then try again'
+    })
+}
+});
 
-
+// Apply rate limiting to all requests
+app.use(limiter);
 app.use(express.json());
 
  app.use("/", router);
-
 // Specific middleware for file upload route
 app.post('/upload', upload.single('myFile'), (req, res) => {
   // Handle file upload logic here

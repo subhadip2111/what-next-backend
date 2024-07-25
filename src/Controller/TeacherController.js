@@ -6,18 +6,18 @@ import { uploadImageToCloudinary } from "../utils/cloudinary.js";
 
 export const addTeacher = async (req, res) => {
     try {
-      let { name, contactInfo, mobile, address, profilePic, examPreparation } = await req.body;
+      let { name, email, mobile, address, profilePic, examPreparation } = await req.body;
       console.log(name);
 
      // Validate required fields
-      if (!name || !contactInfo || !mobile || !address || !profilePic || !examPreparation) {
+      if (!name || !email || !mobile || !address || !profilePic || !examPreparation) {
         return res.status(400).json({ message: 'All fields are required' });
       }
   
       // Create a new teacher document
       const newTeacher = new TeacherModel({
         name,
-        contactInfo,
+        email,
         mobile,
         address,
         profilePic,

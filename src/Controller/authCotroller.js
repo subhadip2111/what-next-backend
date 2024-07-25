@@ -9,7 +9,8 @@ import jwt from "jsonwebtoken"
 export const studentRegister = async (req, res) => {
     try {
       const { name, email, password } = req.body;
-  
+
+
       // Check if all required fields are provided
       if (!name || !email || !password) {
         return res.status(400).json({ message: "All fields are required" });
@@ -84,3 +85,5 @@ export const studentRegister = async (req, res) => {
       return res.status(500).json({ message: "An error occurred during login." });
     }
   };
+
+
